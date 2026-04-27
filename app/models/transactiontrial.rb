@@ -1,2 +1,4 @@
 class Transactiontrial < ApplicationRecord
+
+    
 end

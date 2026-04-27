@@ -13,4 +13,6 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   post "/users", to: "users#create"
+
+  post "api/transactiontrials", to: "transactiontrials#create"
 end

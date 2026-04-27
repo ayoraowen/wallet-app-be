@@ -10,7 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_20_153528) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_27_173609) do
+  create_table "transactiontrials", force: :cascade do |t|
+    t.string "smsmsg"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
