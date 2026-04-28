@@ -14,7 +14,9 @@ default: &default
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  # database: storage/development.sqlite3
+  adapter: postgresql
+  url: <%= ENV["SUPABASE_DATABASE_URL"] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
