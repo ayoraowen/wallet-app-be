@@ -5,9 +5,12 @@
 #   gem "sqlite3"
 #
 default: &default
-  adapter: sqlite3
+  # adapter: sqlite3
+  adapter: postgresql
+  encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
+  url: <%= ENV["SUPABASE_DATABASE_URL"] %>
 
 development:
   <<: *default
@@ -26,7 +29,9 @@ test:
 production:
   primary:
     <<: *default
-    database: storage/production.sqlite3
+    # database: storage/production.sqlite3
+    adapter: postgresql
+    url: <%= ENV["SUPABASE_DATABASE_URL"] %>
   cache:
     <<: *default
     database: storage/production_cache.sqlite3
