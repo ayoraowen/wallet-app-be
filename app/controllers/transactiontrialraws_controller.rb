@@ -8,7 +8,7 @@ class TransactiontrialrawsController < ApplicationController
         data = JSON.parse(raw) rescue params
     
         transactiontrialraw = Transactiontrialraw.new(
-            payload: data.to_s
+            rawpayload: data.to_s
         )
         if transactiontrialraw.save
             render json: { message: "Transaction trial raw created successfully" }, status: :created
