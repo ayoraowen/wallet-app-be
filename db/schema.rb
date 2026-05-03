@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_30_162617) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_03_141427) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -26,6 +26,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_30_162617) do
   enable_extension "extensions.uuid-ossp"
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vault.supabase_vault"
+
+  create_table "transactions", force: :cascade do |t|
+    t.string "rawpayload"
+    t.string "type"
+    t.decimal "amount"
+    t.string "transaction_code"
+    t.string "received_at_time_trial"
+    t.integer "cparty_phn_no"
+    t.string "cparty_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "transactiontrialraws", force: :cascade do |t|
     t.string "rawpayload"
