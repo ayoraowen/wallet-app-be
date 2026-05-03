@@ -1,0 +1,2 @@
+class TxnsController < ApplicationController
+end
