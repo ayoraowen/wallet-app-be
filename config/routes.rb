@@ -17,4 +17,6 @@ Rails.application.routes.draw do
   post "api/transactiontrials/device", to: "transactiontrials#create"
 
   post "api/transactiontrialraws/device", to: "transactiontrialraws#create"
+
+  post "api/txns/device", to: "transactions#create"
 end
