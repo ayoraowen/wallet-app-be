@@ -126,3 +126,4 @@ message = data.dig("payload", "message")
     "transaction_code" => details[:transaction_code]
   )
 end
+end
