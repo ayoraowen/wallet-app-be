@@ -2,7 +2,7 @@ class TxnsController < ApplicationController
     skip_before_action :verify_authenticity_token
 
   # Allowed senders (can be full numbers or partial matches)
-#   ALLOWED_SENDERS = ["6505551212", "SAFARICOM", "MPESA"].freeze #deprecated
+  ALLOWED_SENDERS = ["6505551212", "SAFARICOM", "MPESA"].freeze
 
   # Keywords to look for inside message
 #   KEYWORDS = %w[payment token meter units success failed].freeze #deprecated
