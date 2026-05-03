@@ -30,9 +30,12 @@ class TxnsController < ApplicationController
     sender: sender,
     message: message,
     event: data["event"],
-    amount: enriched_data["amount"],
-    transaction_code: enriched_data["transaction_code"],
-    transaction_type: enriched_data["type"]
+    amount: enriched_data["amount"],#had to be enriched from extractioN from message
+    transaction_code: enriched_data["transaction_code"],#had to be enriched from extractioN from message
+    type: enriched_data["type"],#had to be enriched from extractioN from message
+    received_at_time_trial: data.dig("payload", "receivedAt"),
+    cparty_name: data.dig("payload", "sender"),
+    cparty_phn_no: data.dig("payload", "phoneNumber")
   )
 
   if transactiontrialraw.save
