@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  rawpayload: MyString
+  type: 
+  amount: 9.99
+  transaction_code: MyString
+  received_at_time_trial: MyString
+  cparty_phn_no: 1
+  cparty_name: MyString
+
+two:
+  rawpayload: MyString
+  type: 
+  amount: 9.99
+  transaction_code: MyString
+  received_at_time_trial: MyString
+  cparty_phn_no: 1
+  cparty_name: MyString
