@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_03_141427) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_04_192336) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_03_141427) do
 
   create_table "transactions", force: :cascade do |t|
     t.string "rawpayload"
-    t.string "type"
+    t.string "txn_type"
     t.decimal "amount"
     t.string "transaction_code"
     t.string "received_at_time_trial"
