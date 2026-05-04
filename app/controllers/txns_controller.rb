@@ -25,7 +25,7 @@ class TxnsController < ApplicationController
 
   return render json: { message: "Ignored: not a supported transaction type" }, status: :ok unless enriched_data
 
-  transactiontrialraw = Transactiontrialraw.new(
+  transaction = Transaction.new(
     rawpayload: enriched_data.to_s,
     sender: sender,
     message: message,
@@ -38,10 +38,10 @@ class TxnsController < ApplicationController
     cparty_phn_no: data.dig("payload", "phoneNumber")
   )
 
-  if transactiontrialraw.save
+  if transaction.save
     render json: { message: "Saved successfully" }, status: :created
   else
-    render json: { errors: transactiontrialraw.errors.full_messages }, status: :unprocessable_entity
+    render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
   end
 end
 
