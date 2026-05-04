@@ -27,12 +27,12 @@ class TxnsController < ApplicationController
 
   transaction = Transaction.new(
     rawpayload: enriched_data.to_s,
-    sender: sender,
-    message: message,
-    event: data["event"],
+    # sender: sender,#not in schema
+    # message: message,#not in schema
+    # event: data["event"],#not in schema, will be extracted from payload later if needed
     amount: enriched_data["amount"],#had to be enriched from extractioN from message
     transaction_code: enriched_data["transaction_code"],#had to be enriched from extractioN from message
-    txn_type: enriched_data["type"],#had to be enriched from extractioN from message
+    txn_type: enriched_data["txn_type"],#had to be enriched from extractioN from message
     received_at_time_trial: data.dig("payload", "receivedAt"),
     cparty_name: data.dig("payload", "sender"),
     cparty_phn_no: data.dig("payload", "phoneNumber")
