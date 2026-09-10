@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_04_192336) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_10_190000) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -33,7 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_04_192336) do
     t.decimal "amount"
     t.string "transaction_code"
     t.string "received_at_time_trial"
-    t.integer "cparty_phn_no"
+    t.string "cparty_phn_no"
     t.string "cparty_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
