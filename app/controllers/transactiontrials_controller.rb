@@ -24,7 +24,8 @@
 
 #REFACTORING AS SUGGESTED BY CHATGPT TO HANDLE RAW JSON BODY FOR WEBHOOKS
 class TransactiontrialsController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  # Device SMS ingest: no user context yet, deferred to the scoping slice.
+  skip_before_action :authenticate_user!
 
   def create
     # Read raw JSON body (important for webhooks)

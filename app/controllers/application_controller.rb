@@ -1,7 +1,6 @@
-class ApplicationController < ActionController::Base#ActionController::API
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
-
+# JSON API only -- no CSRF tokens, no cookies, no view layer, no browser
+# gating. Clients authenticate with a bearer token instead.
+class ApplicationController < ActionController::API
   # Authentication is on by default; endpoints that must stay public opt out
   # with `skip_before_action :authenticate_user!`. Failing closed like this
   # means a new controller is protected unless someone deliberately says
