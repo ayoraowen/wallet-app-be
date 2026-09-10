@@ -34,6 +34,7 @@
 /config/master.key
 
 #my added stuff to ignore
+WORKLOG.txt
 myimplementationnotes.txt
 .cmdlog
 timing.log
