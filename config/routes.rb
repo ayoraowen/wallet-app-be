@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   post "/users", to: "users#create"
   post "/login", to: "sessions#create"
   get "/me", to: "me#show"
+  get "/transactions", to: "transactions#index"
 
   post "api/transactiontrials/device", to: "transactiontrials#create"
 
