@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   post "/users", to: "users#create"
+  post "/login", to: "sessions#create"
 
   post "api/transactiontrials/device", to: "transactiontrials#create"
 

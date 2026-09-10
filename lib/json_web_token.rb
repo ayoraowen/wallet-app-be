@@ -9,6 +9,8 @@ class JsonWebToken
 
   class << self
     def encode(payload, exp: DEFAULT_EXPIRY.from_now)
+      raise ArgumentError, "payload must be a Hash, got #{payload.class}" unless payload.is_a?(Hash)
+
       payload = payload.dup
       payload[:exp] = exp.to_i
       JWT.encode(payload, secret, ALGORITHM)
