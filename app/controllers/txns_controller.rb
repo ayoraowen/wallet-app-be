@@ -1,5 +1,7 @@
 class TxnsController < ApplicationController
     skip_before_action :verify_authenticity_token
+    # Device SMS ingest: no user context yet, deferred to the scoping slice.
+    skip_before_action :authenticate_user!
 
   # Allowed senders (can be full numbers or partial matches)
   ALLOWED_SENDERS = ["6505551212", "SAFARICOM", "MPESA"].freeze
