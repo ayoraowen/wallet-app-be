@@ -35,6 +35,8 @@ gem "thruster", require: false
 # gem "image_processing", "~> 1.2"
 
 gem "bcrypt", "~> 3.1.7"
+# Encode/decode JSON Web Tokens for API authentication [https://github.com/jwt/ruby-jwt]
+gem "jwt", "~> 2.8"
 gem "rack-cors"
 gem "pg", "~> 1.4"
 gem "dotenv-rails", groups: [:development, :test]
