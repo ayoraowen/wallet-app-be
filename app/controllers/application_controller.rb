@@ -1,6 +1,18 @@
 class ApplicationController < ActionController::Base#ActionController::API
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
+
+  private
+
+  # Shared shape for every response that hands a session to the client,
+  # so signup and login can't drift apart. Slicing (rather than as_json)
+  # keeps password_digest out by construction.
+  def auth_response(user)
+    {
+      token: JsonWebToken.encode({ user_id: user.id }),
+      user: user.slice(:id, :first_name, :last_name, :email)
+    }
+  end
   #implementing authentication with JWT
   # before_action :authenticate_user
 
