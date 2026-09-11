@@ -38,14 +38,18 @@ class TransactionsController < ApplicationController
       id: transaction.id,
       mpesa_code: transaction.transaction_code,
       type: transaction.txn_type,
+      # Which financial service the message came from (mpesa, standard_chartered,
+      # ncba, ...), so the dashboard can group activity by platform.
+      platform: transaction.platform || "unknown",
       # BigDecimal serialises as a JSON string to preserve precision; these are
       # display amounts, so send a number and skip the client-side coercion.
       amount: transaction.amount&.to_f,
+      # The corpus mixes Kenyan (KSH/KES) and Tanzanian (TSH) messages, so the
+      # client must not sum them blind.
+      currency: transaction.currency,
       counterparty_name: transaction.cparty_name,
       counterparty_phone: transaction.cparty_phn_no&.to_s,
-      # No such column yet -- explicit null beats omitting the key, so the
-      # client sees "unknown" rather than a missing field.
-      balance_after: nil,
+      balance_after: transaction.balance_after&.to_f,
       transaction_time: transaction_time_for(transaction),
       raw_text: transaction.rawpayload
     }

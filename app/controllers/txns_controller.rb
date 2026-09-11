@@ -1,130 +1,56 @@
 class TxnsController < ApplicationController
-    # Device SMS ingest: no user context yet, deferred to the scoping slice.
-    skip_before_action :authenticate_user!
+  # Device SMS ingest: no user context yet, deferred to the scoping slice.
+  skip_before_action :authenticate_user!
 
-  # Allowed senders (can be full numbers or partial matches)
-  ALLOWED_SENDERS = ["6505551212", "SAFARICOM", "MPESA"].freeze
-
-  # Keywords to look for inside message
-#   KEYWORDS = %w[payment token meter units success failed].freeze #deprecated
-
+  # POST /api/txns/device
   def create
-  raw = request.body.read
+    data = parse_body
+    return render json: { error: "Invalid JSON" }, status: :bad_request if data.nil?
 
-  begin
-    data = JSON.parse(raw).deep_stringify_keys
-  rescue JSON::ParserError
-    return render json: { error: "Invalid JSON" }, status: :bad_request
-  end
+    payload = data["payload"] || {}
+    parsed = SmsParser.call(sender: payload["sender"], message: payload["message"])
 
-  sender  = data.dig("payload", "sender")&.downcase
-  message = data.dig("payload", "message")
+    # An SMS that isn't a transaction is a normal, expected outcome -- most of
+    # what a phone receives is marketing. It is reported as 202 Accepted rather
+    # than the old 200, so "we stored this" and "we deliberately skipped this"
+    # are distinguishable by the device. Previously both were 200 and real
+    # transactions were being dropped with no signal at all.
+    unless parsed.transactional?
+      return render json: {
+        status: "ignored",
+        reason: "not a recognised transaction",
+        platform: parsed.platform
+      }, status: :accepted
+    end
 
-  return render json: { message: "Ignored: sender not allowed" }, status: :ok unless sender_matches?(sender)
+    transaction = Transaction.new(
+      rawpayload: data.to_s,
+      platform: parsed.platform,
+      txn_type: parsed.txn_type,
+      amount: parsed.amount,
+      currency: parsed.currency,
+      balance_after: parsed.balance_after,
+      transaction_code: parsed.code,
+      cparty_name: parsed.counterparty,
+      cparty_phn_no: payload["phoneNumber"],
+      received_at_time_trial: payload["receivedAt"]
+    )
 
-  enriched_data = enrich_payload(data)
-
-  return render json: { message: "Ignored: not a supported transaction type" }, status: :ok unless enriched_data
-
-  transaction = Transaction.new(
-    rawpayload: enriched_data.to_s,
-    # sender: sender,#not in schema
-    # message: message,#not in schema
-    # event: data["event"],#not in schema, will be extracted from payload later if needed
-    amount: enriched_data["amount"],#had to be enriched from extractioN from message
-    transaction_code: enriched_data["transaction_code"],#had to be enriched from extractioN from message
-    txn_type: enriched_data["txn_type"],#had to be enriched from extractioN from message
-    received_at_time_trial: data.dig("payload", "receivedAt"),
-    cparty_name: data.dig("payload", "sender"),
-    cparty_phn_no: data.dig("payload", "phoneNumber")
-  )
-
-  if transaction.save
-    render json: { message: "Saved successfully" }, status: :created
-  else
-    render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
-  end
-end
-
-  private
-  def detect_transaction_type(message)
-    # return nil unless message
-    # msg = message.downcase
-    
-    # if msg.include?("paid to")
-    #     "till"
-    # elsif msg.include?("sent to") && msg.include?("for account")
-    #     "paybill"
-    # else
-    #     nil
-    # end
-    return nil unless message
-
-  msg = message.downcase
-
-  case msg
-  when /paid to/
-    "till"
-  when /sent to .* for account/
-    "paybill"
-  else
-    nil
-  end
-end#not sure why its not formatting level properly
-
-def extract_details(message)
-  return {} unless message
-
-  {
-    amount: extract_amount(message),
-    transaction_code: extract_transaction_code(message)
-  }
-end
-
-def extract_amount(message)
-  match = message.match(/Ksh\s?([\d,]+\.\d{2})/i)
-  match ? match[1].gsub(",", "").to_f : nil
-end
-
-def extract_transaction_code(message)
-  match = message.match(/^([A-Z0-9]+)/)
-  match ? match[1] : nil
-end
-  
-  
-
-  def sender_matches?(sender)
-    return false unless sender
-
-    ALLOWED_SENDERS.any? do |allowed|
-      sender.include?(allowed.downcase)
+    if transaction.save
+      render json: { status: "saved", id: transaction.id, platform: parsed.platform,
+                     txn_type: parsed.txn_type }, status: :created
+    else
+      render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def enrich_payload(data)
-#     message = data.dig("payload", "message")
+  private
 
-#   tx_type = detect_transaction_type(message)
-
-#   return nil unless tx_type # ignore if not recognized
-
-#   data.merge(
-#     "processed_at" => Time.current,
-#     "type" => tx_type
-#   )
-#   end
-message = data.dig("payload", "message")
-
-  tx_type = detect_transaction_type(message)
-  return nil unless tx_type
-
-  details = extract_details(message)
-
-  data.merge(
-    "processed_at" => Time.current,
-    "txn_type" => tx_type,
-    "amount" => details[:amount],
-    "transaction_code" => details[:transaction_code]
-  )
-end
+  # Webhooks post a raw JSON body, so read it directly rather than relying on
+  # Rails' param wrapping.
+  def parse_body
+    JSON.parse(request.body.read).deep_stringify_keys
+  rescue JSON::ParserError
+    nil
+  end
 end
